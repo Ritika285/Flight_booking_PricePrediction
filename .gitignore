@@ -5,58 +5,97 @@ import seaborn as sns
 import warnings 
 warnings.filterwarnings("ignore")
 
-fb = pd.read_csv("Flight_Booking.csv") fb
+fb = pd.read_csv("Flight_Booking.csv")
+fb
 
-fb.head() fb.tail()
+fb.head() 
+fb.tail()
 
 fb.info()
 
-fb = fb.drop(columns = ['Unnamed: 0']) fb
+fb = fb.drop(columns = ['Unnamed: 0'])
+fb
 
 fb.isnull().sum()
 
 fb.duplicated().sum()
 
-col = list(fb.columns) col
+col = list(fb.columns) 
+col
 
-for i in col: if (fb[i].dtypes != 'object'): plt.hist(fb[i]) plt.xlabel(i) plt.ylabel('count') plt.show()
+for i in col: 
+  if (fb[i].dtypes != 'object'): 
+    plt.hist(fb[i]) 
+    plt.xlabel(i) 
+    plt.ylabel('count') 
+    plt.show()
 
-for i in col: if (fb[i].dtypes != 'object'): sns.lineplot(fb[i]) plt.xlabel(i) plt.ylabel('count') plt.show()
+for i in col: 
+  if (fb[i].dtypes != 'object'): 
+    sns.lineplot(fb[i]) 
+    plt.xlabel(i) 
+    plt.ylabel('count') 
+    plt.show()
 
 sns.barplot(x = fb['airline'], y = fb['price'])
 
-for i in col: if (fb[i].dtypes != 'object'): plt.boxplot(fb[i]) plt.xlabel(i) plt.ylabel('count') plt.show()
+for i in col: 
+  if (fb[i].dtypes != 'object'): 
+    plt.boxplot(fb[i]) 
+    plt.xlabel(i) 
+    plt.ylabel('count') 
+    plt.show()
 
-Q1 = fb['duration'].quantile(0.25) Q3 = fb['duration'].quantile(0.75) IQR = Q3-Q1 IQR
+Q1 = fb['duration'].quantile(0.25) 
+Q3 = fb['duration'].quantile(0.75) 
+IQR = Q3-Q1 IQR
 
 fb= fb[(fb['duration']>Q1 - 1.5IQR) & (fb['duration']<Q3 + 1.5IQR)]
 
-Q1 = fb.price.quantile(0.25) Q3 = fb.price.quantile(0.75) IQR = Q3-Q1
+Q1 = fb.price.quantile(0.25) 
+Q3 = fb.price.quantile(0.75) 
+IQR = Q3-Q1
 
 fb = fb[(fb['price']>Q1 - 1.5 * IQR) & (fb['price']< Q3 + 1.5 * IQR)]
 
-for i in col: if(fb[i].dtypes != 'object'): plt.boxplot(fb[i]) plt.xlabel(i) plt.ylabel('count') plt.show()
+for i in col: 
+  if(fb[i].dtypes != 'object'): 
+    plt.boxplot(fb[i]) 
+    plt.xlabel(i) 
+    plt.ylabel('count') 
+    plt.show()
 
-col_list = [] for i in fb.columns: if ((fb[i].dtypes != 'object') & (i != 'price')): col_list.append(i) col_list
+col_list = [] 
+for i in fb.columns: 
+  if ((fb[i].dtypes != 'object') & (i != 'price')): 
+    col_list.append(i) 
+col_list
 
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 X = fb[col_list]
 
-vif_data = pd.DataFrame() vif_data['features'] = X.columns vif_data
+vif_data = pd.DataFrame() 
+vif_data['features'] = X.columns 
+vif_data
 
-vif_data['VIF'] = [variance_inflation_factor(X.values, i) for i in range (len(X.columns))] vif_data
+vif_data['VIF'] = [variance_inflation_factor(X.values, i) for i in range (len(X.columns))] 
+vif_data
 
-from sklearn.linear_model import LinearRegression from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression 
+from sklearn.model_selection import train_test_split
 
 y = fb.iloc[:,-1]
 
-X_train, X_test, y_train, y_test = train_test_split (X, y, train_size = 0.8, random_state = 284) X_train
+X_train, X_test, y_train, y_test = train_test_split (X, y, train_size = 0.8, random_state = 284) 
+X_train
 
-l_model = LinearRegression() l_model.fit(X_train, y_train)
+l_model = LinearRegression() 
+l_model.fit(X_train, y_train)
 
 prediction = l_model.predict(X_test)
 
 from sklearn.metrics import *
 
-r2score = r2_score(y_test, prediction) r2score
+r2score = r2_score(y_test, prediction) 
+r2score
